@@ -1,7 +1,5 @@
 module CG
-  import Base.+;
-  import Base.-;
-  import Base.*;
+  import Base: +, -, *, getindex;
 
   export Vec4, Vec4f, Mat4, Mat4f, Object;
 
@@ -18,6 +16,43 @@ module CG
     v2::T
     v3::T
     v4::T
+  end
+
+  getindex(v::Vec4, index) =
+  begin
+    if (index == 1)
+      return v.e1;
+    elseif (index == 2)
+      return v.e2;
+    elseif (index == 3)
+      return v.e3;
+    elseif (index == 4)
+      return v.e4;
+    elseif (index == :)
+      return v;
+    end
+  end
+
+  getindex(m::Mat4, row, col) =
+  begin
+    if ((row == :) && (col == :))
+      return m;
+    end
+
+    r;
+    if (row == 1)
+      r = m.v1;
+    elseif (row == 2)
+      r = m.v2;
+    elseif (row == 3)
+      r = m.v3;
+    elseif (row == 4)
+      r = m.v4;
+    elseif (row == :)
+      return Vec4(m.v1[col], m.v2[col], m.v3[col], m.v4[col]);
+    end
+
+    return r[col];
   end
 
   #typedefs
@@ -51,7 +86,7 @@ module CG
     return Vec4f(a * v.e1, a * v.e2, a * v.e3, a * v.e4);
   end
 
-  # scalar multiplication
+  # dot product
   *(v1::Vec4, v2::Vec4) =
   begin
     return v1.e1 * v2.e1 + v1.e2 * v2.e2 + v1.e3 * v2.e3 + v1.e4 * v2.e4;
@@ -67,6 +102,16 @@ module CG
     );
   end
 
+  *(m1::Mat4f, m2::Mat4f) =
+  begin
+    return Mat4f(
+      Vec4f(m1[1, :] * m2[:, 1], m1[1, :] * m2[:, 2], m1[1, :] * m2[:, 3], m1[1, :] * m2[:, 4]),
+      Vec4f(m1[2, :] * m2[:, 1], m1[2, :] * m2[:, 2], m1[2, :] * m2[:, 3], m1[2, :] * m2[:, 4]),
+      Vec4f(m1[3, :] * m2[:, 1], m1[3, :] * m2[:, 2], m1[3, :] * m2[:, 3], m1[3, :] * m2[:, 4]),
+      Vec4f(m1[4, :] * m2[:, 1], m1[4, :] * m2[:, 2], m1[4, :] * m2[:, 3], m1[4, :] * m2[:, 4])
+    )
+  end
+
   ## Object
   type Object
     vertices::Vector{Vec4f}
@@ -79,7 +124,8 @@ module CG
   type Transformation
     M::Mat4f
 
-    Transformation(v1::Vec4f, v2::Vec4f, v3::Vec4f, v4::Vec4f) = new(Mat4f(v1, v2, v3, v4))
+    Transformation(v1::Vec4f, v2::Vec4f, v3::Vec4f, v4::Vec4f) = new(Mat4f(v1, v2, v3, v4));
+    Transformation(m::Mat4f) = new(m);
   end
 
   *(T::Transformation, v::Vec4f) =
@@ -143,5 +189,11 @@ module CG
       Vec4f(0, 0, 1, 0),
       Vec4f(0, 0, 0, 1)
     )
+  end
+
+  ## Transformation chaining
+  *(t1::Transformation, t2::Transformation) =
+  begin
+    return Transformation(t1.M * t2.M)
   end
 end
