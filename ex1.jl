@@ -20,9 +20,9 @@ v1 = Vec4f(1, 0, 0, 1);
 v2 = Vec4f(0, 0, 0, 1);
 v3 = Vec4f(0, 0, 1, 1);
 
-triangle = Object{Vec4f}(v1, v2, v3);
+triangle = Object(v1, v2, v3);
 
-house = Object{Vec4f}(Vec4f(-1, -1, 0, 1),
+house = Object(Vec4f(-1, -1, 0, 1),
 Vec4f(1, -1, 0, 1),
 Vec4f(-1, 1, 0, 1),
 Vec4f(0, 2, 0, 1),
@@ -33,4 +33,6 @@ Vec4f(-1, 1, 0, 1),
 Vec4f(1, 1, 0, 1),
 Vec4f(1, -1, 0, 1))
 
-render(house, figAxis=[-2, 2, -2, 2]);
+#render(translation(Vec4f(1.5, 0, 0, 1)) * house, figAxis=[-2, 2, -2, 2]);
+#render(scaling(Vec4f(0.5, 0.5, 0.5, 1)) * house, figAxis=[-2, 2, -2, 2]);
+render(roty(pi/4) * house, figAxis=[-2, 2, -2, 2]);

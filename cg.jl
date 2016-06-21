@@ -68,9 +68,80 @@ module CG
   end
 
   ## Object
-  type Object{T<:Vec4}
-    vertices::Vector{T}
-    Object(x::Vector{T}) = new(x)
-    Object(x::T...) = new(collect(T, x))
+  type Object
+    vertices::Vector{Vec4f}
+    Object(x::Vector{Vec4f}) = new(x)
+    Object(x::Vec4f...) = new(collect(Vec4f, x))
+  end
+
+  ## Transformation
+  export Transformation;
+  type Transformation
+    M::Mat4f
+
+    Transformation(v1::Vec4f, v2::Vec4f, v3::Vec4f, v4::Vec4f) = new(Mat4f(v1, v2, v3, v4))
+  end
+
+  *(T::Transformation, v::Vec4f) =
+  begin
+    return T.M * v;
+  end
+
+  *(T::Transformation, o::Object) =
+  begin
+    return Object(map(x -> T * x, o.vertices))
+  end
+
+  # 1) Translation
+  export translation;
+  function translation(t::Vec4f)
+    return Transformation(
+      Vec4f(1, 0, 0, t.e1),
+      Vec4f(0, 1, 0, t.e2),
+      Vec4f(0, 0, 1, t.e3),
+      Vec4f(0, 0, 0, 1)
+    )
+  end
+
+  # 2) scaling
+  export scaling;
+  function scaling(t::Vec4f)
+    return Transformation(
+      Vec4f(t.e1, 0, 0, 0),
+      Vec4f(0, t.e2, 0, 0),
+      Vec4f(0, 0, t.e3, 0),
+      Vec4f(0, 0, 0, 1)
+    )
+  end
+
+  # 3) rotation
+  export rotx;
+  function rotx(a)
+    return Transformation(
+      Vec4f(1, 0, 0, 0),
+      Vec4f(0, cos(a), -sin(a), 0),
+      Vec4f(0, sin(a), cos(a), 0),
+      Vec4f(0, 0, 0, 1)
+    )
+  end
+
+  export roty;
+  function roty(a)
+    return Transformation(
+      Vec4f(cos(a), 0, sin(a), 0),
+      Vec4f(0, 1, 0, 0),
+      Vec4f(sin(a), 0, cos(a), 0),
+      Vec4f(0, 0, 0, 1)
+    )
+  end
+
+  export rotz;
+  function rotz(a)
+    return Transformation(
+      Vec4f(cos(a), -sin(a), 0, 0),
+      Vec4f(sin(a), cos(a), 0, 0),
+      Vec4f(0, 0, 1, 0),
+      Vec4f(0, 0, 0, 1)
+    )
   end
 end
