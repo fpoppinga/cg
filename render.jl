@@ -15,6 +15,6 @@ function render(object::Object; figAxis = [-1, 1, -1, 1], figNum=1, figTitle="Ob
 	y = [v.e2 for v in object.vertices]
 
 	# plot projection data
-	plot(x,y)
-  show()
+	plot(x,y);
+  show();
 end

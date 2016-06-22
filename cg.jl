@@ -1,5 +1,5 @@
 module CG
-  import Base: +, -, *, getindex;
+  import Base: +, -, *, getindex, inv;
 
   export Vec4, Vec4f, Mat4, Mat4f, Object;
 
@@ -112,6 +112,25 @@ module CG
     )
   end
 
+  inv(m::Mat4f) =
+  begin
+    mat = zeros(4, 4);
+    for r = 1:4
+      for c = 1:4
+        mat[r, c] = m[r, c];
+      end
+    end
+
+    matinv = inv(mat);
+
+    return Mat4f(
+        Vec4f(matinv[1, 1], matinv[1, 2], matinv[1, 3], matinv[1, 4]),
+        Vec4f(matinv[2, 1], matinv[2, 2], matinv[2, 3], matinv[2, 4]),
+        Vec4f(matinv[3, 1], matinv[3, 2], matinv[3, 3], matinv[3, 4]),
+        Vec4f(matinv[4, 1], matinv[4, 2], matinv[4, 3], matinv[4, 4])
+      )
+  end
+
   ## Object
   type Object
     vertices::Vector{Vec4f}
@@ -191,9 +210,19 @@ module CG
     )
   end
 
+  export euler;
+  function euler(x, y, z)
+    return rotz(z) * roty(y) * rotx(x);
+  end
+
   ## Transformation chaining
   *(t1::Transformation, t2::Transformation) =
   begin
     return Transformation(t1.M * t2.M)
+  end
+
+  inv(t::Transformation) =
+  begin
+    return Transformation(inv(t.M));
   end
 end

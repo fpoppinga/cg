@@ -1,8 +1,13 @@
 include("cg.jl")
 using CG;
+include("render.jl")
+include("objects.jl")
+using Objects;
 
-x = rotx(pi/4) * rotx(pi/4);
-y = rotx(pi/2);
+house = houseOfSantaClaus();
 
-println(x);
-println(y);
+T = rotz(pi/2);
+
+import Base: inv;
+
+render(inv(T) * house, figAxis = [-2, 2, -2, 2]);
