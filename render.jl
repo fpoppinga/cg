@@ -1,5 +1,7 @@
 using PyPlot
 using Camera
+using SceneObjects
+using Lighting
 
 function render(object::Object; figAxis = [-1, 1, -1, 1], figNum=1, figTitle="Object")
   # make figure figNum current figure
@@ -20,8 +22,25 @@ function render(object::Object; figAxis = [-1, 1, -1, 1], figNum=1, figTitle="Ob
   show();
 end
 
-function render(object::Object, camera::OrthoCamera; figNum=1)
+function render(object::Object, camera::ICamera; figNum=1)
 	# transform scene given in world coordinates to camera space
 	camObject = camera.worldToCam * object
 	render(camObject; figNum=figNum);
+end
+
+function tracerays(scene::Scene, lights::Lights, camera::ICamera, shader::Function)
+  nx = camera.nx;
+  ny = camera.ny;
+  screen = Array(Float32, nx, ny);
+  for i = 1:nx
+    for j = 1:ny
+      ray = generateRay(camera, i, j);
+      screen[i, j] = shader(ray, scene, lights);
+    end
+  end
+
+  figure();
+  gray();
+  imshow(screen');
+  colorbar();
 end
