@@ -49,7 +49,7 @@ module Raytracing
 
   function surfaceNormal(ray::Ray, t::Float32, sphere::Sphere)
     p = ray.origin + t * ray.direction;
-    n = unitize(p - sphere.origin);
+    n = unitize(p - sphere.center);
     return n;
   end
 

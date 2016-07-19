@@ -18,13 +18,13 @@ module Shaders
       intersection, t = Raytracing.intersect(ray, o);
 
       if (!intersection)
-        continue;
+        return 0.0f0;
       end
 
       p = ray.origin + t * ray.direction;
-      n = surfaceNormal(ray, t, o);
+      n = Raytracing.surfaceNormal(ray, t, o);
 
-      L = 0;
+      L = 0.0f0;
       for light in lights.positions
         L = L + 1.0f0 * max(0, n * light);
       end
