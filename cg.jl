@@ -1,7 +1,7 @@
 module CG
   import Base: +, -, *, getindex, inv;
 
-  export Vec4, Vec4f, Mat4, Mat4f, Object;
+  export Vec4, Vec4f, Mat4, Mat4f, Object, homo, xproduct;
 
   # Basic types
   type Vec4{T<:Number}
@@ -91,6 +91,20 @@ module CG
   begin
     return v1.e1 * v2.e1 + v1.e2 * v2.e2 + v1.e3 * v2.e3 + v1.e4 * v2.e4;
   end
+
+  homo = function(v::Vec4)
+    return 1.0/v[4] * v;
+  end
+
+  xproduct = function(v1::Vec4, v2::Vec4)
+    v1n = homo(v1);
+    v2n = homo(v2);
+    return Vec4(v1n[2] * v2n[3] - v1n[3] * v2n[2],
+                v1n[3] * v2n[1] - v1n[1] * v2n[3],
+                v1n[1] * v2n[2] - v1n[2] * v2n[1],
+                v1n[4]);
+  end
+
   # 2) matrix operations
   *(m::Mat4, v::Vec4) =
   begin

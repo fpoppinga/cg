@@ -1,4 +1,5 @@
 using PyPlot
+using Camera
 
 function render(object::Object; figAxis = [-1, 1, -1, 1], figNum=1, figTitle="Object")
   # make figure figNum current figure
@@ -17,4 +18,10 @@ function render(object::Object; figAxis = [-1, 1, -1, 1], figNum=1, figTitle="Ob
 	# plot projection data
 	plot(x,y);
   show();
+end
+
+function render(object::Object, camera::OrthoCamera; figNum=1)
+	# transform scene given in world coordinates to camera space
+	camObject = camera.worldToCam * object
+	render(camObject; figNum=figNum);
 end
