@@ -213,7 +213,7 @@ module CG
     return Transformation(
       Vec4f(cos(a), 0, sin(a), 0),
       Vec4f(0, 1, 0, 0),
-      Vec4f(sin(a), 0, cos(a), 0),
+      Vec4f(-sin(a), 0, cos(a), 0),
       Vec4f(0, 0, 0, 1)
     )
   end

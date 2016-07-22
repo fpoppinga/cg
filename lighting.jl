@@ -5,6 +5,10 @@ module Lighting
   abstract Lights;
 
   type PointLights <: Lights
-    positions::Vector{Vec4f};
+    position::Vec4f
+  end
+
+  type SceneLights
+    lights::Vector{Lights}
   end
 end
