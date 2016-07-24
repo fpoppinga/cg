@@ -12,9 +12,9 @@ module Camera
 
   OrthoCamera(rc::Vec4f, rv::Vec4f, ru::Vec4f) =
   begin
-    a = xproduct(rv, ru);
-    b = ru; # pointing up
-    c = rv; # pointing backwards
+    a = unitize(xproduct(rv, ru));
+    b = unitize(ru); # pointing up
+    c = unitize(rv); # pointing backwards
     camToWorld = Transformation(
       Vec4f(a[1], b[1], c[1], rc[1]),
       Vec4f(a[2], b[2], c[2], rc[2]),
