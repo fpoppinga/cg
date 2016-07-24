@@ -44,7 +44,36 @@ module Raytracing
   end
 
   function intersect(ray::Ray, aabb::AABB)
-    return false; #TODO: implement
+    tmin::Float32 = -Inf32
+  	tmax::Float32 = Inf32
+  	p = aabb.center-ray.origin
+  	# reduce hiting problem to 1D
+  	# for each axis aligned band calculate the intersection points
+  	for (f,g,h) in [(p.e1,ray.direction.e1,aabb.hx),(p.e2,ray.direction.e2,aabb.hy),(p.e3,ray.direction.e3,aabb.hz)]
+  		t₁ = (f+h)/g
+  		t₂ = (f-h)/g
+  		if t₁ > t₂
+  			tmp = t₁
+  			t₁ = t₂
+  			t₂ = tmp
+  		end
+  		t₁ > tmin && (tmin=t₁)
+  		t₂ < tmax && (tmax=t₂)
+  		# if cube hit this wont hold true
+  		if tmin > tmax
+  			return false, 0.0f0
+  		# if tmax < 0 cube is behind camera
+  		elseif tmax < 0
+  			return false, 0.0f0
+  		end
+  	end
+  	# cube is in front of us
+  	if tmin > 0
+  		return true, tmin
+  	# cam is inside the cube
+  	else
+  		return true, tmax
+  	end
   end
 
   function surfaceNormal(ray::Ray, t::Float32, sphere::Sphere)
@@ -54,6 +83,26 @@ module Raytracing
   end
 
   function surfaceNormal(ray::Ray, t::Float32, aabb::AABB)
-    return Vec4f(1, 0, 0, 1); #TODO: implement
+    # center of cube
+    c = aabb.center
+    #point ray hits on aabb
+    h = ray.origin+t*ray.direction
+    ch = h-c
+    x = abs(ch.e1/aabb.hx)
+    y = abs(ch.e2/aabb.hy)
+    z = abs(ch.e3/aabb.hz)
+    if x > y
+      if x > z
+        return sign(ch.e1/aabb.hx)*Vec4f(1,0,0,0)
+      else
+        return sign(ch.e3/aabb.hz)*Vec4f(0,0,1,0)
+      end
+    else
+      if y > z
+        return sign(ch.e2/aabb.hy)*Vec4f(0,1,0,0)
+      else
+        return sign(ch.e3/aabb.hz)*Vec4f(0,0,1,0)
+      end
+    end
   end
 end

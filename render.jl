@@ -28,7 +28,7 @@ function render(object::Object, camera::ICamera; figNum=1)
 	render(camObject; figNum=figNum);
 end
 
-function tracerays(scene::Scene, lights::Lights, camera::ICamera, shader::Function)
+function tracerays(scene::Scene, lights::SceneLights, camera::ICamera, shader::Function)
   nx = camera.nx;
   ny = camera.ny;
   screen = Array(Float32, nx, ny);

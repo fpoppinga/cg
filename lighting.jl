@@ -1,14 +1,14 @@
 module Lighting
   using CG;
-  export PointLights, Lights;
+  export PointLight, Light, SceneLights;
 
-  abstract Lights;
+  abstract Light;
 
-  type PointLights <: Lights
+  type PointLight <: Light
     position::Vec4f
   end
 
   type SceneLights
-    lights::Vector{Lights}
+    lights::Vector{Light}
   end
 end

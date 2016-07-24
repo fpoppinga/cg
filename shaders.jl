@@ -2,7 +2,7 @@ module Shaders
   using CG, Raytracing, SceneObjects, Lighting;
   export hitShader, lambertShader;
 
-  function hitShader(ray::Ray, scene::Scene, lights::Lights)
+  function hitShader(ray::Ray, scene::Scene, lights::SceneLights)
     for o in scene.sceneObjects
       intersection, t = Raytracing.intersect(ray, o);
       if intersection
@@ -13,7 +13,7 @@ module Shaders
     end
   end
 
-  function lambertShader(ray::Ray, scene::Scene, lights::Lights)
+  function lambertShader(ray::Ray, scene::Scene, lights::SceneLights)
     for o in scene.sceneObjects
       intersection, t = Raytracing.intersect(ray, o);
 
@@ -25,10 +25,14 @@ module Shaders
       n = Raytracing.surfaceNormal(ray, t, o);
 
       L = 0.0f0;
-      for light in lights.positions
-        L = L + 1.0f0 * max(0, n * light);
+      for l in lights.lights
+        L = L + 1.0f0 * max(0, n * l.position);
       end
       return L;
     end
+  end
+
+  function blinnPhongShader(ray::Ray, scene::Scene, lights::SceneLights)
+
   end
 end
