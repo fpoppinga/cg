@@ -19,6 +19,7 @@ module Raytracing
   	origin = camera.camToWorld * p
   	# unit vector for ray direction
   	direction = camera.camToWorld * (unitize(p-o))
+    direction.e4 = 0;
   	return Ray(origin, direction)
   end
 
@@ -74,6 +75,20 @@ module Raytracing
   	else
   		return true, tmax
   	end
+  end
+
+  function intersect(ray::Ray, scene::Scene)
+    tmin = Inf;
+    hitObject = nothing;
+    for obj in scene.sceneObjects
+      hit, t = intersect(ray, obj);
+      if (hit && t < tmin)
+        tmin = t;
+        hitObject = obj;
+      end
+    end
+
+    return hitObject != nothing, tmin, hitObject;
   end
 
   function surfaceNormal(ray::Ray, t::Float32, sphere::Sphere)
